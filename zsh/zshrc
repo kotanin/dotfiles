@@ -1,0 +1,56 @@
+# *******************************
+# zshでgitのブランチ名を表示する
+# *******************************
+autoload -Uz vcs_info    
+setopt prompt_subst    
+
+zstyle ':vcs_info:*' formats '%F{white}[%s][* %F{green}%b%f]'    
+zstyle ':vcs_info:*' actionformats '%F{white}[%s][* %F{green}%b%f(%F{red}%a%f)]'    
+precmd() { 
+    vcs_info
+    print ""
+ }    
+
+PROMPT='%F{red}%n%F{white}@%F{green}%~ ${vcs_info_msg_0_}
+%F{white}$ '
+
+fpath=(/usr/local/share/zsh-completions $fpath)
+
+autoload -U compinit
+compinit -u
+
+#export ZSH=~/.oh-my-zsh
+
+#ZSH_THEME="robbyrussell"
+ZSH_THEME="kotanin"
+
+plugins=(git)
+
+# history(include peco)
+function peco-select-history() {
+    local tac
+    if which tac > /dev/null; then
+        tac="tac"
+    else
+        tac="tail -r"
+    fi
+
+    BUFFER=$(\history -n 1 | \
+        eval $tac | \
+        awk '!a[$0]++' | \
+        peco --query "$LBUFFER")
+    CURSOR=$#BUFFER
+    zle clear-screen
+}
+zle -N peco-select-history
+bindkey '^r' peco-select-history
+setopt hist_ignore_dups
+
+eval "$(pyenv init -)"
+
+[[ -d ~/.rbenv  ]] && \
+  export PATH=${HOME}/.rbenv/bin:${PATH} && \
+  eval "$(rbenv init -)"
+
+#export ZPLUG_HOME=/usr/local/opt/zplug
+#source $ZPLUG_HOME/init.zsh
