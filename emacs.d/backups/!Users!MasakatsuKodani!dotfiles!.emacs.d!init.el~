@@ -1,0 +1,173 @@
+(defun add-to-load-path (&rest paths)
+  (let (path)
+    (dolist (path paths paths)
+      (let ((default-directory
+              (expand-file-name (concat user-emacs-directory path))))
+        (add-to-list 'load-path default-directory)
+        (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+            (normal-top-level-add-subdirs-to-load-path))))))
+
+(add-to-load-path "elisp" "elpa" "conf" "public_repos")
+
+;; package
+(require 'package)
+(package-initialize)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("org" . "http://orgmode.org/elpa/"))
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+;; path from shell
+(exec-path-from-shell-initialize)
+
+;; setup init-loader
+(require 'init-loader)
+(init-loader-load "inits")
+
+;; tab space
+(setq-default tab-width 4)
+(setq default-tab-width 4)
+(setq tab-stop-list '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120))
+
+;; color-theme
+(load-theme 'wombat t)
+
+;; line prefs
+(global-linum-mode t)
+(global-hl-line-mode t)
+(setq show-paren-delay 0)
+(show-paren-mode t)
+
+;; hidden tool-bar
+(tool-bar-mode 0)
+
+;; hidden menu-bar
+(menu-bar-mode 0)
+
+;; show column number
+(column-number-mode t)
+
+;; backup files
+(add-to-list 'backup-directory-alist
+			 (cons "." "~/.emacs.d/backups/"))
+(setq auto-save-file-name-transforms
+	  `((".*" ,(expand-file-name "~/.emacs.d/backups/") t)))
+(setq backup-directory-alist
+	  `((".*" ,temporary-file-directory)))
+(setq auto-save-file-transforms
+	  `((".*" ,temporary-file-directory t)))
+
+;; show path in title bar
+(setq frame-title-format "%f")
+
+;; font face
+;; ascii
+(set-face-attribute 'default nil
+					:family "MyricaM M"
+					:height 120)
+;; japanese
+(set-fontset-font
+  nil 'japanese-jisx0208
+  (font-spec :family "MyricaM M"))
+
+;; define key
+(keyboard-translate ?\C-h ?\C-?)
+(define-key global-map (kbd "C-x ?") 'help-command)
+(define-key global-map (kbd "C-m") 'newline-and-indent)
+(define-key global-map (kbd "C-c l") 'toggle-truncate-lines)
+(define-key global-map (kbd "C-t") 'other-window)
+
+;; text code
+(set-language-environment "Japanese")
+(prefer-coding-system 'utf-8)
+
+;; filename text code when Mac OS X
+(when (eq system-type 'darwin)
+  (require 'ucs-normalize)
+  (set-file-name-coding-system 'utf-8-hfs)
+  (setq locale-coding-system 'utf-8-hfs))
+
+;; filename text code when Windows
+(when (eq window-system 'w32)
+  (set-file-name-coding-system 'cp932)
+  (setq locale-coding-system 'cp932))
+
+;;skk
+(require 'skk-setup)
+
+;;oniisama
+(require 'oniisama)
+(imouto)
+
+;;Nyan Mode
+(require 'nyan-mode)
+(nyan-mode)
+(nyan-start-animation)
+
+;;markdown-mode
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+;;(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;;magit
+(require 'magit)
+
+;; git-gutter
+(require 'git-gutter)
+(global-git-gutter-mode t)
+
+;; visual-regexp
+(global-set-key (kbd "M-%") 'vr/query-replace)
+
+;; dired
+;; http://tam5917.hatenablog.com/entry/20130126/1359206522
+;; dired-find-alternate-file の有効化
+(put 'dired-find-alternate-file 'disabled nil)
+(defun dired-open-in-accordance-with-situation ()
+    (interactive)
+    (cond ((string-match "\\(?:\\.\\.?\\)"
+                         (format "%s" (thing-at-point 'filename)))
+           (dired-find-alternate-file))
+          ((file-directory-p (dired-get-filename))
+           (dired-find-alternate-file))
+          (t
+           (dired-find-file))))
+;; バッファを増やさずに上のディレクトリに移動
+(defun dired-up-alternate-directory ()
+  (interactive)
+  (let* ((dir (dired-current-directory))
+         (up (file-name-directory (directory-file-name dir))))
+    (or (dired-goto-file (directory-file-name dir))
+        ;; Only try dired-goto-subdir if buffer has more than one dir.
+        (and (cdr dired-subdir-alist)
+             (dired-goto-subdir up))
+        (progn
+          (find-alternate-file up)
+          (dired-goto-file dir)))))
+
+;; RET 標準の dired-find-file では dired バッファが複数作られるので
+;; dired-find-alternate-file を代わりに使う
+(define-key dired-mode-map (kbd "RET") 'dired-open-in-accordance-with-situation)
+(define-key dired-mode-map (kbd "a") 'dired-find-file)
+;; ディレクトリの移動キーを追加(wdired 中は無効)
+(define-key dired-mode-map (kbd "<left>") 'dired-up-alternate-directory)
+(define-key dired-mode-map (kbd "<right>") 'dired-open-in-accordance-with-situation)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+	(visual-regexp magit go-mode git-gutter exec-path-from-shell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
