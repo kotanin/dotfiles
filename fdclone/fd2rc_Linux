@@ -1,0 +1,14 @@
+# configurations by customizer
+
+# shell variables definition
+TMPDIR=/var/folders/xk/45zdbldd467g39_0smlv2qj80000gn/T/
+LANGUAGE=utf8
+DEFKCODE=utf8
+INPUTKCODE=utf8
+PTYINKCODE=utf8
+PTYOUTKCODE=utf8
+FNAMEKCODE=utf8
+URLKCODE=utf8
+SHELL=/bin/zsh
+
+# launcher definition

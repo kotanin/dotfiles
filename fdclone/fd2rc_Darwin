@@ -1,0 +1,16 @@
+# configurations by customizer
+
+# shell variables definition
+TMPDIR=/var/folders/xk/45zdbldd467g39_0smlv2qj80000gn/T/
+LANGUAGE=utf8-mac
+DEFKCODE=utf8-mac
+INPUTKCODE=utf8-mac
+PTYINKCODE=utf8-mac
+PTYOUTKCODE=utf8-mac
+FNAMEKCODE=utf8-mac
+URLKCODE=utf8-mac
+SHELL=/bin/zsh
+
+# launcher definition
+launch "/.xls" "open %C"
+launch "/.xlsx" "open %C"
