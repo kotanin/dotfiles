@@ -1,0 +1,2 @@
+[alias]
+    log-oneline = log --pretty='%C(yellow)%h%Creset %cd %s' --decorate --all
