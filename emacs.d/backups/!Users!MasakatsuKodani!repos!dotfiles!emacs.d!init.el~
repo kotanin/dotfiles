@@ -17,10 +17,14 @@
         (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
             (normal-top-level-add-subdirs-to-load-path))))))
 
-(add-to-load-path "elisp")
+(add-to-load-path "elisp" "conf" "public_repos")
 
 ;; path from shell
-(exec-path-from-shell-initialize)
+;;(exec-path-from-shell-initialize)
+
+;; setup init-loader
+(require 'init-loader)
+(init-loader-load "~/.emacs.d/inits")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -29,7 +33,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-	(exec-path-from-shell))))
+	(tide typescript-mode json-mode visual-regexp magit go-mode git-gutter exec-path-from-shell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
