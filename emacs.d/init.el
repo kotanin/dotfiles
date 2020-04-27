@@ -113,6 +113,11 @@
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
+;;neotree
+(add-to-list 'load-path "/some/path/neotree")
+(require 'neotree)
+(global-set-key [f8] 'neotree-toggle)
+
 ;; visual-regexp
 (global-set-key (kbd "M-%") 'vr/query-replace)
 
