@@ -11,7 +11,8 @@ precmd() {
     print ""
  }    
 
-PROMPT='%F{red}%n%F{white}@%F{green}%~ ${vcs_info_msg_0_}
+EMOJI=$'\U1F980'
+PROMPT='${EMOJI} %F{red}%n%F{white}@%F{green}%~ ${vcs_info_msg_0_}
 %F{white}$ '
 
 fpath=(/usr/local/share/zsh-completions $fpath)
@@ -46,7 +47,6 @@ zle -N peco-select-history
 bindkey '^r' peco-select-history
 setopt hist_ignore_dups
 
-eval "$(pyenv init -)"
 
 [[ -d ~/.rbenv  ]] && \
   export PATH=${HOME}/.rbenv/bin:${PATH} && \
